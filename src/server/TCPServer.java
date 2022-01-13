@@ -64,6 +64,7 @@ public class TCPServer {
 					}
 				}
 			}
+			ServerGUI.updateNotification("Da gui message \"" + message + "\" tu " + request.client.getUsername() + " den moi nguoi");
 		} else {
 			for (int i = 0; i < listRequest.size(); i++) {
 				if (listRequest.get(i).client.getUsername().equals(request.client.getFriend())) {

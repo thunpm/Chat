@@ -108,7 +108,7 @@ public class ClientGUI extends JFrame {
 					} else if (check == 1) {
 						JOptionPane.showMessageDialog(null, "Không tìm thấy người dùng trong mạng!");
 					} else {
-						JOptionPane.showMessageDialog(null, "Lỗi không xác định!");
+						JOptionPane.showMessageDialog(null, "Người liên hệ đã có trong danh sách rồi!");
 					}
 				}
 			}
