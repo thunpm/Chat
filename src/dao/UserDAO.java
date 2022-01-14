@@ -166,7 +166,32 @@ public class UserDAO extends BaseDAO {
 		}
 		
 	}
+	
+	public int isFriend(String usernameUser, String usernameFriend) {
+		int kt = 0;
+		String idUser = getUserByUsername(usernameUser).getId();
+		String idFriend = getUserByUsername(usernameFriend).getId();
+		Connection connection = getConnection();
+        String sql = "select * from frienduser where IdUser = ? and IdFriend = ?";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
+        try {
+        	pstmt = connection.prepareStatement(sql);
+        	pstmt.setString(1, idUser);
+        	pstmt.setString(2,idFriend);
+        	rs = pstmt.executeQuery();
+            if(rs.next()) {
+            	kt = 1;
+            }
+        } catch (SQLException e) {	
+        	e.printStackTrace();
+        } finally {
+        	closeConnection(connection, pstmt, rs);
+        }
+        
+        return kt;
+	}
 
 }
 
