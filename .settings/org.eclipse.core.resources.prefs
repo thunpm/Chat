@@ -1,3 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/client/ClientGUI.java=UTF-8
 encoding//src/client/Login.java=UTF-8
+encoding//src/client/TCPClient.java=UTF-8
+encoding//src/server/ServerGUI.java=UTF-8
+encoding//src/server/TCPServer.java=UTF-8

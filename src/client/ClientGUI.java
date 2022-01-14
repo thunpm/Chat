@@ -130,7 +130,7 @@ public class ClientGUI extends JFrame {
 						
 						// hien thi nguoi lien he moi vao danh sach nguoi lien he
 						if (Login.user.getListFriend().size() > 0) {
-							list.get(Login.user.getListFriend().size() - 1).setText(name);
+							list.get(Login.user.getListFriend().size()).setText(name);
 						} else {
 							list.get(0).setText(name); 
 						}
@@ -160,7 +160,7 @@ public class ClientGUI extends JFrame {
 		
 		list = new ArrayList<>();
 		
-		JLabel lbl = new JLabel("Chat Group");
+		JLabel lbl = new JLabel("chat group");
 		lbl.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lbl.setBounds(10, 11, 107, 21);
 		listFriend.add(lbl);
@@ -236,11 +236,7 @@ public class ClientGUI extends JFrame {
 				}
 				
 				if (message != null && ! "".equals(message.trim())) {
-					try {
-						client.send(message.trim());										// xu li button gui tin nhan
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					client.send(message.trim());										// xu li button gui tin nhan
 					
 					updateMessage(message, true);
 				}

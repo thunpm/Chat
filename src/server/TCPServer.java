@@ -8,6 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import model.Client;
 import dao.UserDAO;
 
@@ -55,10 +57,10 @@ public class TCPServer {
 	}
 	
 	public void sendMessageToClient(Request request, String message) {  // nhan message tu Client va gui den cho Client khac
-		UserDAO userDAO = new UserDAO();
-		if ("Chat Group".equals(request.client.getFriend())) {  // chat Group thi gui het ban be trong ket noi
+//		UserDAO userDAO = new UserDAO();
+		if ("chat group".equals(request.client.getFriend())) {  // chat Group thi gui het
 			for (int i = 0; i < listRequest.size(); i++) {
-				if (listRequest.get(i) != request && userDAO.isFriend(request.client.getUsername(), listRequest.get(i).client.getUsername()) == 1) {
+				if (listRequest.get(i) != request) { // && userDAO.isFriend(request.client.getUsername(), listRequest.get(i).client.getUsername()) == 1) {
 					try {
 						listRequest.get(i).send(request.client.getUsername() + ": " + message);
 					} catch (IOException e) {
@@ -66,13 +68,13 @@ public class TCPServer {
 					}
 				}
 			}
-			ServerGUI.updateNotification("Da gui message \"" + message + "\" tu " + request.client.getUsername() + " den moi nguoi");
+			ServerGUI.updateNotification("Đã gửi message \"" + message + "\" từ " + request.client.getUsername() + " đến mọi người");
 		} else {
 			for (int i = 0; i < listRequest.size(); i++) {
 				if (listRequest.get(i).client.getUsername().equals(request.client.getFriend())) {
 					try {
 						listRequest.get(i).send(request.client.getUsername() + ": " + message);
-						ServerGUI.updateNotification("Da gui message \"" + message + "\" tu " + request.client.getUsername() + " den " + request.client.getFriend());
+						ServerGUI.updateNotification("Đã gửi message \"" + message + "\" từ " + request.client.getUsername() + " đến " + request.client.getFriend());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -81,6 +83,22 @@ public class TCPServer {
 			}
 		}
 	}
+	
+	public boolean checkOnline(String username) {
+    	if ("chat group".equals(username)) {
+    		if (listRequest.size() > 0) {
+    			return true;
+    		}
+    	} else {
+    		for (int i = 0; i < listRequest.size(); i++) {
+    			if (listRequest.get(i).client.getUsername().equals(username)) {
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	return false;
+    }
 	
 	class Request extends Thread { // luong xu li yeu cau cua Client
 		Socket skc;
@@ -102,32 +120,21 @@ public class TCPServer {
 			opstr.flush();
 		}
         
-        public boolean checkOnline(String userName) {
-        	boolean kt = false;
-    		for(int i = 0; i < listRequest.size(); i++) {
-    			if(listRequest.get(i).client.getUsername().equals(userName)) {
-    				kt = true;
-    			}
-    		}
-    		return kt;
-        }
-        
         public void run() {
             try { 
-                while (true) {
+                while (isStop ==  false) {
                     String str = ipstr.readLine();
                     
                     if (str.length() > 8 && "username".equals(str.substring(0, 8))) { // message dau tien gui username
                     	client.setUsername(str.substring(8, str.length()));
-                    	ServerGUI.updateNotification("Da ket noi den " + client.getUsername() + " tai " + skc.getRemoteSocketAddress().toString());
+                    	ServerGUI.updateNotification("Đã kết nối đến " + client.getUsername() + " tại " + skc.getRemoteSocketAddress().toString());
                     } else {
                     	if (str.length() > 6 && "friend".equals(str.substring(0, 6)) && checkOnline(str.substring(6, str.length())) == false) {
                     		client.setFriend(str.substring(6, str.length()));
-                    		ServerGUI.updateNotification("Khong the ket noi " + client.getUsername() + " voi " + client.getFriend() + " vi " + client.getFriend() + " khong hoat dong. ");
-                    	}
-                    	else if (str.length() > 6 && "friend".equals(str.substring(0, 6)) && checkOnline(str.substring(6, str.length()))) { // message gui nguoi ban muon chat cung
+                    		ServerGUI.updateNotification("Không thể kết nối " + client.getUsername() + " với " + client.getFriend() + " vì " + client.getFriend() + " không hoạt động");
+                    	} else if (str.length() > 6 && "friend".equals(str.substring(0, 6)) && checkOnline(str.substring(6, str.length()))) { // message gui nguoi ban muon chat cung
                     		client.setFriend(str.substring(6, str.length()));
-                    		ServerGUI.updateNotification("Da ket noi " + client.getUsername() + " voi " + client.getFriend());
+                    		ServerGUI.updateNotification("Đã kết nối " + client.getUsername() + " với " + client.getFriend());
                     	} else {
                     		sendMessageToClient(this, str); // message chua tin nhan muon gui
                         }
@@ -139,7 +146,7 @@ public class TCPServer {
             
             // Client thoat ra thi tien hanh ngat ket noi va thong bao cho Server  
             listRequest.remove(this);
-            ServerGUI.updateNotification(client.getUsername() + " da ngat ket noi");
+            ServerGUI.updateNotification(client.getUsername() + " đã ngắt kết nối");
             
             try {
 				skc.close();

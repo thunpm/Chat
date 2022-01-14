@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 public class TCPClient extends Thread {
 	private Socket socket;
 	private BufferedReader ipstr;
@@ -22,12 +24,17 @@ public class TCPClient extends Thread {
 		send("username" + username);
 	}
 
-	public void send(String message) throws IOException {
-		if (message != null && ! "".equals(message)) {
-			opstr.writeBytes(message);
-			opstr.write(13);
-			opstr.write(10);
-			opstr.flush();
+	public void send(String message) {
+		try {
+			if (message != null && ! "".equals(message)) {
+				opstr.writeBytes(message);
+				opstr.write(13);
+				opstr.write(10);
+				opstr.flush();
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Không thể kết nối đến Server!");
+			e.printStackTrace();
 		}
 	}
 	

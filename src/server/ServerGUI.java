@@ -107,7 +107,7 @@ public class ServerGUI extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
 				server = new TCPServer(port);
-				updateNotification("Server dang chay");						// action cho button START Server
+				updateNotification("Server đang chạy");						// action cho button START Server
 			}
 		});
 		btnStart.setForeground(new Color(255, 255, 255));
@@ -120,7 +120,7 @@ public class ServerGUI extends JFrame {
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				server.stop();
-				updateNotification("Server da dung");						// action cho button STOP Server
+				updateNotification("Server đã dừng");						// action cho button STOP Server
 			}
 		});
 		btnStop.setForeground(new Color(255, 255, 255));
