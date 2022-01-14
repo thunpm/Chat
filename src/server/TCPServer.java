@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import model.Client;
+import dao.UserDAO;
 
 public class TCPServer {
 	private static ArrayList<Request> listRequest; // list cac luong xu li ket noi den Client
@@ -54,9 +55,10 @@ public class TCPServer {
 	}
 	
 	public void sendMessageToClient(Request request, String message) {  // nhan message tu Client va gui den cho Client khac
+		UserDAO userDAO = new UserDAO();
 		if ("Chat Group".equals(request.client.getFriend())) {  // chat Group thi gui het ban be trong ket noi
 			for (int i = 0; i < listRequest.size(); i++) {
-				if (listRequest.get(i) != request) {
+				if (listRequest.get(i) != request && userDAO.isFriend(request.client.getUsername(), listRequest.get(i).client.getUsername()) == 1) {
 					try {
 						listRequest.get(i).send(request.client.getUsername() + ": " + message);
 					} catch (IOException e) {
