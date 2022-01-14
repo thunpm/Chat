@@ -113,7 +113,7 @@ public class TCPServer {
                     		client.setFriend(str.substring(6, str.length()));
                     		ServerGUI.updateNotification("Da ket noi " + client.getUsername() + " voi " + client.getFriend());
                     	} else {
-                    		sendMessageToClient(this, str); // message chua tin nhan muon gui
+                			sendMessageToClient(this, str); // message chua tin nhan muon gui
                         }
                     }
                 }

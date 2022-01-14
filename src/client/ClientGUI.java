@@ -18,10 +18,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import dao.UserDAO;
 
@@ -29,7 +31,7 @@ import dao.UserDAO;
 public class ClientGUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtAddFriend;
-	public static JTextArea txtMessage;	// khung hien thi tin nhan
+	public static JTextPane txtMessage;	// khung hien thi tin nhan
 	private JLabel nameFriend;
 	private JTextField txtInput;
 	private JButton btnSend;
@@ -38,8 +40,37 @@ public class ClientGUI extends JFrame {
 	private UserDAO userDAO = new UserDAO();
 	private JTextField listFriend;
 	
-	public static void updateMessage(String message) {
-		txtMessage.append(message + "\n");
+	// thêm html vào message
+	public static void appendToPane(JTextPane tp, String msg){
+		tp.setContentType( "text/html" );
+		
+	    HTMLDocument doc = (HTMLDocument) tp.getDocument();
+	    HTMLEditorKit editorKit = (HTMLEditorKit) tp.getEditorKit();
+	    try {	
+	      editorKit.insertHTML(doc, doc.getLength(), msg, 0, 0, null);
+	      tp.setCaretPosition(doc.getLength());
+	      
+	    } catch(Exception e){
+	      e.printStackTrace();
+	    }
+	}
+	
+	public static void updateMessage(String message, boolean send) {
+		if (send == false) {
+			String name = "";
+			int i = 0;
+			for (; i < message.length(); i++) {
+				if (':' == message.charAt(i)) {
+					break;
+				}
+				name = name + message.charAt(i);
+			}
+			message = message.substring(i + 1, message.length());
+			appendToPane(txtMessage, "<b style='font-size: 12px;'>" + name + "</b>");
+			appendToPane(txtMessage, "<div style='width: 170px; background-color: #00b3b3; word-wrap: break-word; padding: 3px; color: white; font-size: 13px; margin-bottom: 7px;'>   "+ message +"</div>");
+		} else {
+			appendToPane(txtMessage, "<div style='margin-left: 210px; width: 170px; word-wrap: break-word; background-color: #ffffb3; padding: 3px; margin-bottom: 7px; color: black; font-size: 13px;'>   "+ message +"</div>");	
+		}
 	}
 	
 	public void setNameFriend(String name) {
@@ -54,7 +85,7 @@ public class ClientGUI extends JFrame {
 			public void windowOpened(WindowEvent we) {
 					
 				try {
-					client = new TCPClient("192.168.182.5", 7, Login.user.getUsername());	
+					client = new TCPClient("localhost", 7, Login.user.getUsername());	
 					
 					client.start();												// ket noi den Server khi hien thi giao dien
 				} catch (IOException e) {
@@ -143,7 +174,7 @@ public class ClientGUI extends JFrame {
 			if (i < Login.user.getListFriend().size()) {
 				lblNewLabel = new JLabel(Login.user.getListFriend().get(i).getUsername());
 			} else {																// xu li hien thi danh sach cac lien he
-				lblNewLabel = new JLabel("");
+				lblNewLabel = new JLabel();
 			}
 			lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			lblNewLabel.setBounds(10, 11 + 21*(i + 1), 107, 21);
@@ -161,7 +192,7 @@ public class ClientGUI extends JFrame {
 						client.chatWithFriend(lblNewLabel.getText());				// xu li khi nhap vao chon nguoi chat cung
 						setNameFriend(lblNewLabel.getText());
 						
-						txtMessage.setText("");
+						txtMessage.setText(null);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -177,11 +208,11 @@ public class ClientGUI extends JFrame {
 		nameFriend.setBounds(147, 59, 114, 14);
 		contentPane.add(nameFriend);
 		
-		txtMessage = new JTextArea();
+		txtMessage = new JTextPane();
 		txtMessage.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		txtMessage.setEditable(false);
 		txtMessage.setBounds(147, 85, 522, 259);									// khung hien thi tin nhan
-		txtMessage.setLineWrap(true);
+//		txtMessage.setLineWrap(true);
 		JScrollPane scrollMessage = new JScrollPane(txtMessage, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollMessage.setSize(522, 260);
@@ -194,23 +225,24 @@ public class ClientGUI extends JFrame {
 		txtInput.setColumns(10);
 		
 		btnSend = new JButton("G\u1EECI");
-		btnSend.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		btnSend.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
 				String message = txtInput.getText();
+				txtInput.setText(null);
 				
 				if ("Người nhận".equals(nameFriend.getText())) {
 					JOptionPane.showMessageDialog(null, "Vui lòng chọn người gửi!");
 				}
 				
-				if (message != null && ! "".equals(message)) {
+				if (message != null && ! "".equals(message.trim())) {
 					try {
-						client.send(message);										// xu li button gui tin nhan
+						client.send(message.trim());										// xu li button gui tin nhan
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 					
-					updateMessage(message);
-					txtInput.setText("");
+					updateMessage(message, true);
 				}
 			}
 		});
@@ -221,4 +253,5 @@ public class ClientGUI extends JFrame {
 		contentPane.add(btnSend);
 		
 	}
+	
 }

@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.net.Inet4Address;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javax.swing.JButton;
@@ -15,8 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class ServerGUI extends JFrame {
@@ -73,7 +73,7 @@ public class ServerGUI extends JFrame {
 		contentPane.add(txtIP);
 		txtIP.setColumns(10);												// khung hien thi IP Server
 		try {
-			txtIP.setText(Inet4Address.getLocalHost().getHostAddress());
+			txtIP.setText(InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

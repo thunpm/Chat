@@ -23,10 +23,12 @@ public class TCPClient extends Thread {
 	}
 
 	public void send(String message) throws IOException {
-		opstr.writeBytes(message);
-		opstr.write(13);
-		opstr.write(10);
-		opstr.flush();
+		if (message != null && ! "".equals(message)) {
+			opstr.writeBytes(message);
+			opstr.write(13);
+			opstr.write(10);
+			opstr.flush();
+		}
 	}
 	
 	public void chatWithFriend(String friend) throws IOException {
@@ -38,8 +40,10 @@ public class TCPClient extends Thread {
 		try {
 			while (true) {
 				String message = ipstr.readLine();
-
-				ClientGUI.updateMessage(message);
+				
+				if (message != null && ! "".equals(message.trim())) {
+					ClientGUI.updateMessage(message, false);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
