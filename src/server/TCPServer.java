@@ -102,6 +102,16 @@ public class TCPServer {
 			opstr.flush();
 		}
         
+        public boolean checkOnline(String userName) {
+        	boolean kt = false;
+    		for(int i = 0; i < listRequest.size(); i++) {
+    			if(listRequest.get(i).client.getUsername().equals(userName)) {
+    				kt = true;
+    			}
+    		}
+    		return kt;
+        }
+        
         public void run() {
             try { 
                 while (true) {
@@ -111,11 +121,15 @@ public class TCPServer {
                     	client.setUsername(str.substring(8, str.length()));
                     	ServerGUI.updateNotification("Da ket noi den " + client.getUsername() + " tai " + skc.getRemoteSocketAddress().toString());
                     } else {
-                    	if (str.length() > 6 && "friend".equals(str.substring(0, 6))) { // message gui nguoi ban muon chat cung
+                    	if (str.length() > 6 && "friend".equals(str.substring(0, 6)) && checkOnline(str.substring(6, str.length())) == false) {
+                    		client.setFriend(str.substring(6, str.length()));
+                    		ServerGUI.updateNotification("Khong the ket noi " + client.getUsername() + " voi " + client.getFriend() + " vi " + client.getFriend() + " khong hoat dong. ");
+                    	}
+                    	else if (str.length() > 6 && "friend".equals(str.substring(0, 6)) && checkOnline(str.substring(6, str.length()))) { // message gui nguoi ban muon chat cung
                     		client.setFriend(str.substring(6, str.length()));
                     		ServerGUI.updateNotification("Da ket noi " + client.getUsername() + " voi " + client.getFriend());
                     	} else {
-                			sendMessageToClient(this, str); // message chua tin nhan muon gui
+                    		sendMessageToClient(this, str); // message chua tin nhan muon gui
                         }
                     }
                 }
