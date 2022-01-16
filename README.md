@@ -10,12 +10,12 @@
 
   * *Client 1*
   
-![Optional Text](../master/img/client1.png)
+![Optional Text](../main/img/client1.png)
 
  * *Client 2*
   
-![Optional Text](../master/img/client2.png)
+![Optional Text](../main/img/client2.png)
 
  * *Server*
   
-![Optional Text](../master/img/server.png)
+![Optional Text](../main/img/server.png)
